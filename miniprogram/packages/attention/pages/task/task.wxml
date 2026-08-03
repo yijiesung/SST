@@ -1,0 +1,44 @@
+<view class="attention-page" bindtouchstart="onStageTouchStart" catchtouchmove="blockMove">
+  <view class="loading" wx:if="{{phase === 'loading'}}">
+    <view class="spinner"></view>
+    <view>{{loadingText}}</view>
+  </view>
+
+  <view class="error" wx:elif="{{phase === 'error'}}">
+    <view class="message-title">资源尚未配置</view>
+    <view class="message-copy">{{errorMessage}}</view>
+    <button class="back-button" catchtouchstart="noop" bindtap="returnHome">返回训练营</button>
+  </view>
+
+  <block wx:else>
+    <view class="practice-guide" wx:if="{{mode === 'practice' &amp;&amp; phase === 'ready'}}">
+      先注视“+”；两张图片消失后，请尽快点击原中性图片位置出现的圆点。绿色 ✓ 代表正确，红色 ✗ 代表错误或超时。
+    </view>
+    <view class="cross" wx:if="{{phase === 'fixation'}}">+</view>
+    <view class="pair" wx:if="{{phase === 'pair'}}">
+      <image class="pair-image left" src="{{leftImage}}" mode="aspectFit" />
+      <image class="pair-image right" src="{{rightImage}}" mode="aspectFit" />
+    </view>
+    <view class="probe {{probeSide}}" wx:if="{{phase === 'probe'}}"></view>
+    <view class="feedback correct" wx:if="{{phase === 'feedback' &amp;&amp; result === 'correct'}}">✓</view>
+    <view class="feedback wrong" wx:if="{{phase === 'feedback' &amp;&amp; result !== 'correct'}}">✗</view>
+    <view class="probe flash {{probeSide}}" wx:if="{{phase === 'feedback' &amp;&amp; result !== 'correct'}}"></view>
+
+    <view class="message" wx:if="{{phase === 'ready'}}">
+      <view class="message-title">{{interrupted ? '训练已暂停' : '注意力训练'}}</view>
+      <view class="message-copy">{{interrupted ? '检测到应用进入后台，本试次将重新开始。' : '准备好后，按下按钮开始。'}}</view>
+      <view class="start-button" catchtouchstart="startTask">开始训练</view>
+    </view>
+
+    <view class="message" wx:if="{{phase === 'break'}}">
+      <view class="message-title">本组结束，请休息片刻</view>
+      <view class="message-copy">准备好后继续下一组。</view>
+      <view class="start-button" catchtouchstart="startNextBlock">继续训练</view>
+    </view>
+
+    <view class="message" wx:if="{{phase === 'complete'}}">
+      <view class="message-title">恭喜您，今天的任务已完成！</view>
+      <button class="back-button" catchtouchstart="noop" bindtap="returnHome">返回训练营</button>
+    </view>
+  </block>
+</view>

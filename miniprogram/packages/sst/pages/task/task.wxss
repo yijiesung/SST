@@ -1,0 +1,23 @@
+page { height: 100%; background: #fff; }
+.task-page { height: 100vh; background: #fff; overflow: hidden; }
+.visual-area { box-sizing: border-box; height: 70vh; position: relative; display: flex; align-items: center; justify-content: center; background: #fff; border: 8rpx solid transparent; }
+.visual-area.stop-signal { border-color: #ef3340; box-shadow: inset 0 0 42rpx rgba(239, 51, 64, .9), 0 0 32rpx rgba(239, 51, 64, .7); animation: glow .24s infinite alternate; }
+.stimulus { width: 100%; height: 100%; }
+.cross { color: #111; font-size: 84rpx; font-weight: 400; line-height: 1; }
+.control-area { box-sizing: border-box; height: 30vh; position: relative; display: flex; align-items: center; justify-content: center; border-top: 1rpx solid #edf0f3; }
+.instruction { position: absolute; left: 24rpx; top: 22rpx; width: 48%; color: #596579; font-size: 23rpx; line-height: 1.45; }
+.interruption { position: absolute; top: 14rpx; color: #b85d00; font-size: 22rpx; }
+.start-key { width: 176rpx; height: 176rpx; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; background: #2864dc; box-shadow: 0 14rpx 34rpx rgba(40, 100, 220, .32), inset 0 -8rpx 0 rgba(0, 0, 0, .1); font-size: 29rpx; font-weight: 700; user-select: none; }
+.start-key.holding { transform: translateY(5rpx) scale(.98); background: #174ebd; box-shadow: 0 6rpx 15rpx rgba(40, 100, 220, .25), inset 0 3rpx 8rpx rgba(0, 0, 0, .15); }
+.feedback { font-size: 52rpx; font-weight: 750; }
+.feedback.good { color: #1ca66c; }
+.feedback.bad { color: #e13745; }
+.break-card, .error { width: 76%; text-align: center; }
+.break-title, .error-title { font-size: 40rpx; font-weight: 750; color: #172033; }
+.break-copy, .error-copy { margin-top: 22rpx; color: #657286; font-size: 27rpx; line-height: 1.6; }
+.back-button { margin-top: 34rpx; padding: 0 40rpx; height: 86rpx; border-radius: 18rpx; color: #fff; background: #2864dc; font-size: 28rpx; }
+.loading, .error { height: 100vh; margin: 0 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #657286; }
+.spinner { width: 54rpx; height: 54rpx; margin-bottom: 24rpx; border: 6rpx solid #dbe4f5; border-top-color: #2864dc; border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes glow { from { opacity: .84; } to { opacity: 1; } }
+

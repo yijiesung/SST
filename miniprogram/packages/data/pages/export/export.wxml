@@ -1,0 +1,22 @@
+<view class="page">
+  <view class="header">
+    <view class="title">科研数据导出</view>
+    <view class="subtitle">受试者编号 {{participantId}}</view>
+  </view>
+  <view class="stats">
+    <view class="stat"><text class="number">{{trialCount}}</text><text>试次/事件记录</text></view>
+    <view class="stat"><text class="number">{{summaryCount}}</text><text>区块汇总</text></view>
+  </view>
+  <view class="card">
+    <view class="card-title">原始 JSON</view>
+    <view class="copy">保留每个试次的随机种子、预设时长、单调时间戳、触摸事件、坐标、SSD/呈现时长及判定。</view>
+    <button class="primary" bindtap="exportJson">导出 JSON</button>
+  </view>
+  <view class="card">
+    <view class="card-title">试次级 CSV</view>
+    <view class="copy">适合导入 R、SPSS、Python 或 Excel。嵌套事件以 JSON 文本保存在单元格中。</view>
+    <button class="secondary" bindtap="exportCsv">导出 CSV</button>
+  </view>
+  <view class="notice">数据仅保存在当前设备的小程序本地存储中。请定期导出并转存到研究数据管理系统。</view>
+</view>
+

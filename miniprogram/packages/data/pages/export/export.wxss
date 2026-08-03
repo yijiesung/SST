@@ -1,0 +1,15 @@
+.page { padding: 42rpx 28rpx 64rpx; }
+.header { padding: 16rpx 12rpx 30rpx; }
+.title { font-size: 48rpx; font-weight: 750; color: #172033; }
+.subtitle { margin-top: 10rpx; color: #768397; font-size: 25rpx; }
+.stats { display: flex; gap: 18rpx; margin-bottom: 24rpx; }
+.stat { flex: 1; padding: 28rpx; display: flex; flex-direction: column; border-radius: 22rpx; color: #6c788a; background: #e9effb; font-size: 23rpx; }
+.number { margin-bottom: 6rpx; color: #285bc7; font-size: 42rpx; font-weight: 750; }
+.card { margin-top: 20rpx; padding: 32rpx; border-radius: 24rpx; background: #fff; box-shadow: 0 12rpx 34rpx rgba(35, 55, 88, .07); }
+.card-title { font-size: 32rpx; font-weight: 700; }
+.copy, .notice { margin-top: 14rpx; color: #758195; font-size: 25rpx; line-height: 1.6; }
+.primary, .secondary { margin-top: 24rpx; height: 88rpx; border-radius: 18rpx; font-size: 28rpx; font-weight: 650; }
+.primary { color: #fff; background: #2864dc; }
+.secondary { color: #315a9c; background: #edf3ff; }
+.notice { padding: 20rpx 12rpx; text-align: center; font-size: 22rpx; }
+

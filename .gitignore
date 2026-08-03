@@ -1,0 +1,6 @@
+.DS_Store
+cdn-dist/
+node_modules/
+__pycache__/
+miniprogram/private.config.js
+*.log

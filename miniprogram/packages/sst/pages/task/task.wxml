@@ -1,0 +1,39 @@
+<view class="task-page" catchtouchmove="blockMove">
+  <view class="loading" wx:if="{{phase === 'loading'}}">
+    <view class="spinner"></view>
+    <view>{{loadingText}}</view>
+  </view>
+
+  <view class="error" wx:elif="{{phase === 'error'}}">
+    <view class="error-title">资源尚未配置</view>
+    <view class="error-copy">{{errorMessage}}</view>
+    <button class="back-button" bindtap="returnHome">返回训练营</button>
+  </view>
+
+  <block wx:else>
+    <view class="visual-area {{stopSignal ? 'stop-signal' : ''}}" bindtouchstart="onImageTouchStart">
+      <view class="cross" wx:if="{{phase === 'ready' || phase === 'preparation'}}">+</view>
+      <image wx:if="{{phase === 'stimulus'}}" class="stimulus" src="{{currentImage}}" mode="aspectFit" />
+      <view class="feedback good" wx:if="{{phase === 'feedback' &amp;&amp; feedbackKind === 'good'}}">正确</view>
+      <view class="feedback bad" wx:if="{{phase === 'feedback' &amp;&amp; feedbackKind === 'bad'}}">{{feedbackText}}</view>
+      <view class="break-card" wx:if="{{phase === 'break'}}">
+        <view class="break-title">本组结束，请休息片刻</view>
+        <view class="break-copy">准备好后，长按下方起始键继续。</view>
+      </view>
+      <view class="break-card" wx:if="{{phase === 'complete'}}">
+        <view class="break-title">恭喜您，今天的任务已完成！</view>
+        <button class="back-button" bindtap="returnHome">返回训练营</button>
+      </view>
+    </view>
+
+    <view class="control-area">
+      <view class="instruction" wx:if="{{mode === 'practice'}}">{{instruction}}</view>
+      <view class="interruption" wx:if="{{interrupted}}">检测到任务中断，请重新按住起始键。</view>
+      <view class="start-key {{isHolding ? 'holding' : ''}}"
+        wx:if="{{phase !== 'complete' &amp;&amp; phase !== 'feedback'}}"
+        bindtouchstart="onStartTouchStart"
+        bindtouchend="onStartTouchEnd"
+        bindtouchcancel="onStartTouchCancel">起始键</view>
+    </view>
+  </block>
+</view>

@@ -1,0 +1,32 @@
+{
+  "pages": [
+    "pages/home/home"
+  ],
+  "subpackages": [
+    {
+      "root": "packages/sst",
+      "name": "sst",
+      "pages": ["pages/task/task"]
+    },
+    {
+      "root": "packages/attention",
+      "name": "attention",
+      "pages": ["pages/task/task"]
+    },
+    {
+      "root": "packages/data",
+      "name": "data",
+      "pages": ["pages/export/export"]
+    }
+  ],
+  "window": {
+    "navigationBarTitleText": "大脑训练营",
+    "navigationBarBackgroundColor": "#f5f7fb",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#f5f7fb",
+    "backgroundTextStyle": "light"
+  },
+  "style": "v2",
+  "lazyCodeLoading": "requiredComponents"
+}
+

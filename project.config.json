@@ -1,0 +1,24 @@
+{
+  "appid": "touristappid",
+  "projectname": "sst-abm-training",
+  "description": "14天控制力与注意力行为训练小程序",
+  "miniprogramRoot": "miniprogram/",
+  "compileType": "miniprogram",
+  "setting": {
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "minified": true,
+    "uglifyFileName": true,
+    "urlCheck": true,
+    "checkInvalidKey": true,
+    "useCompilerPlugins": false
+  },
+  "packOptions": {
+    "ignore": [
+      { "type": "folder", "value": "tests" },
+      { "type": "folder", "value": "docs" }
+    ]
+  }
+}
+

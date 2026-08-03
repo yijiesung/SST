@@ -1,0 +1,5 @@
+{
+  "desc": "训练任务不开放搜索索引",
+  "rules": [{ "action": "disallow", "page": "*" }]
+}
+

@@ -1,0 +1,54 @@
+<view class="page">
+  <view class="hero">
+    <view class="day-pill" wx:if="{{enrolled}}">第 {{day}} 天 · 共 14 天</view>
+    <view class="eyebrow">BRAIN TRAINING CAMP</view>
+    <view class="title">{{title}}</view>
+    <view class="intro" wx:if="{{day === 1}}">
+      <text>从今天起，你将开启一段为期 14 天的挑战之旅。</text>
+      <text>🛡️ 提升控制力 —— 在冲动来临时，能果断刹住车</text>
+      <text>🎯 强化注意力 —— 在干扰环绕时，能快速收回注意</text>
+    </view>
+    <view class="intro" wx:elif="{{day === 14}}">
+      <text>恭喜你走到了终点。今天回归起点，用一次控制力训练检验这半个月的成长。</text>
+      <text>给自己的坚持鼓个掌。🏆</text>
+    </view>
+    <view class="intro" wx:else>
+      <text>今天依次完成控制力训练与注意力训练。</text>
+      <text>准备好了就开始吧。</text>
+    </view>
+  </view>
+
+  <view class="card" wx:if="{{!enrolled}}">
+    <view class="card-title">建立训练档案</view>
+    <view class="label">受试者编号</view>
+    <input class="input" placeholder="请输入匿名编号" value="{{participantInput}}" bindinput="onParticipantInput" maxlength="32" />
+    <button class="primary" bindtap="startEnrollment">开始 14 天训练</button>
+    <view class="privacy">编号仅用于区分本机训练数据，请勿填写姓名、手机号等身份信息。</view>
+  </view>
+
+  <view class="card" wx:else>
+    <view class="card-head">
+      <view>
+        <view class="card-title">今日任务</view>
+        <view class="participant">编号 {{participantId}}</view>
+      </view>
+      <view class="status">{{completedCount}} / {{tasks.length}}</view>
+    </view>
+
+    <view class="task" wx:for="{{tasks}}" wx:key="id">
+      <view class="task-index {{item.done ? 'done' : ''}}">{{item.done ? '✓' : index + 1}}</view>
+      <view class="task-copy">
+        <view class="task-name">{{item.name}}</view>
+        <view class="task-note">{{item.note}}</view>
+      </view>
+      <view class="task-state">{{item.done ? '已完成' : (index === nextIndex ? '待开始' : '未解锁')}}</view>
+    </view>
+
+    <button class="primary" wx:if="{{!dayComplete}}" bindtap="startNextTask">开始下一项任务</button>
+    <view class="complete-box" wx:else>恭喜您，今天的任务已完成！</view>
+    <button class="secondary" bindtap="openExport">导出科研数据</button>
+  </view>
+
+  <view class="footer-note">训练中请保持小程序位于前台，并关闭来电或消息弹窗干扰。</view>
+</view>
+
