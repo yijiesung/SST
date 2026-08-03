@@ -14,8 +14,8 @@
     <view class="visual-area {{stopSignal ? 'stop-signal' : ''}}" bindtouchstart="onImageTouchStart">
       <view class="cross" wx:if="{{phase === 'ready' || phase === 'preparation'}}">+</view>
       <image wx:if="{{phase === 'stimulus'}}" class="stimulus" src="{{currentImage}}" mode="aspectFit" />
-      <view class="feedback good" wx:if="{{phase === 'feedback' &amp;&amp; feedbackKind === 'good'}}">正确</view>
-      <view class="feedback bad" wx:if="{{phase === 'feedback' &amp;&amp; feedbackKind === 'bad'}}">{{feedbackText}}</view>
+      <view class="feedback good" wx:if="{{phase === 'feedback' && feedbackKind === 'good'}}">正确</view>
+      <view class="feedback bad" wx:if="{{phase === 'feedback' && feedbackKind === 'bad'}}">{{feedbackText}}</view>
       <view class="break-card" wx:if="{{phase === 'break'}}">
         <view class="break-title">本组结束，请休息片刻</view>
         <view class="break-copy">准备好后，长按下方起始键继续。</view>
@@ -30,7 +30,7 @@
       <view class="instruction" wx:if="{{mode === 'practice'}}">{{instruction}}</view>
       <view class="interruption" wx:if="{{interrupted}}">检测到任务中断，请重新按住起始键。</view>
       <view class="start-key {{isHolding ? 'holding' : ''}}"
-        wx:if="{{phase !== 'complete' &amp;&amp; phase !== 'feedback'}}"
+        wx:if="{{phase !== 'complete' && phase !== 'feedback'}}"
         bindtouchstart="onStartTouchStart"
         bindtouchend="onStartTouchEnd"
         bindtouchcancel="onStartTouchCancel">起始键</view>

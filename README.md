@@ -22,24 +22,34 @@
 - `/Users/songyijie/Documents/创业/陆静-游戏成瘾训练/游戏图片`
 - `/Users/songyijie/Documents/创业/陆静-游戏成瘾训练/中性图片`
 
-脚本支持 AWS S3、Cloudflare R2 等 S3 兼容对象存储，使用 macOS `sips` 将图片最长边压到 1600px、JPEG 质量 78；提示音由脚本生成 80ms 单次“滴”声。对象使用一年不可变缓存，上传后自动更新两个分包内的 CDN 根地址。
+项目已按腾讯云 COS 作为正式素材存储方案配置。脚本使用 macOS `sips` 将图片最长边压到 1600px、JPEG 质量 78；提示音由脚本生成 80ms 单次“滴”声。对象使用一年不可变缓存，上传后自动更新两个分包内的 CDN 根地址。
+
+先在腾讯云 COS 控制台创建存储桶，记录完整存储桶名称（必须包含腾讯云账号 APPID 后缀，例如 `sst-training-1250000000`）和地域（例如 `ap-shanghai`）。生产环境建议使用 COS 作为源站连接腾讯云 CDN 自定义域名；若使用私有读存储桶，需要给 CDN 服务完成回源授权。最终填写到 `COS_PUBLIC_BASE_URL` 的 HTTPS 地址必须能匿名读取图片和音频。
+
+上传密钥应使用 CAM 子账号并限定到该存储桶。脚本至少需要 `cos:PutObject`；使用 `--resume` 时还需要对象查询权限。不要使用主账号密钥，不要把 SecretKey 写进项目文件。
 
 ```bash
-export CDN_ENDPOINT='https://<account>.r2.cloudflarestorage.com'
-export CDN_BUCKET='<bucket>'
-export CDN_ACCESS_KEY_ID='<key-id>'
-export CDN_SECRET_ACCESS_KEY='<secret>'
-export CDN_PUBLIC_BASE_URL='https://cdn.example.org'
-export CDN_REGION='auto'
-python3 scripts/upload_cdn.py --dry-run
-python3 scripts/upload_cdn.py
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements-cos.txt
+
+export COS_SECRET_ID='<CAM 子账号 SecretId>'
+export COS_SECRET_KEY='<CAM 子账号 SecretKey>'
+export COS_BUCKET='<存储桶名称-APPID>'
+export COS_REGION='<地域，例如 ap-shanghai>'
+export COS_PUBLIC_BASE_URL='https://<COS 自定义域名或 CDN 域名>'
+
+python scripts/upload_cos.py --dry-run
+python scripts/upload_cos.py --resume
 ```
 
-随后在微信公众平台把 `CDN_PUBLIC_BASE_URL` 的域名加入 downloadFile、request 合法域名。正式发布前不要关闭微信开发者工具的 URL 合法域名校验。
+`COS_SECRET_ID`、`COS_SECRET_KEY` 应使用仅对目标存储桶具有对象上传/查询权限的 CAM 子账号密钥，不要写入代码或提交到 Git。`COS_PUBLIC_BASE_URL` 必须能匿名 HTTPS 读取对象；可使用公开读存储桶的自定义域名，或使用 COS 作为源站的腾讯云 CDN 域名。
+
+随后在微信公众平台把 `COS_PUBLIC_BASE_URL` 的域名加入 downloadFile、request 合法域名。正式发布前不要关闭微信开发者工具的 URL 合法域名校验。
 
 ## 开发与验证
 
-1. 用微信开发者工具打开项目根目录，填写真实 `appid`（当前为 `touristappid`）。
+1. 用微信开发者工具打开项目根目录；AppID 已配置为 `wxad7881ff77589f11`。
 2. 配置 CDN，并确认资源域名已加入小程序后台白名单。
 3. 执行 `npm test` 校验随机化与自适应算法。
 4. 执行 `npm run check:size` 校验主包体积和“包内无任务媒体”规则。
@@ -53,9 +63,14 @@ python3 scripts/upload_cdn.py
 
 ## Git 备份
 
-本地仓库的 `origin` 已配置为 `https://github.com/yijiesung/SST.git`。该远端当前要求 GitHub 身份认证；登录后执行：
+本地仓库的 `origin` 已配置为 `https://github.com/yijiesung/SST.git`。若出现 `Write access to repository not granted`，说明当前 HTTPS 凭据对应的 GitHub 账号没有该仓库写权限。请使用仓库所有者账号重新认证，或由仓库所有者在 Settings → Collaborators 中邀请当前账号并授予 Write 权限。
+
+权限修复后先读取远端历史：
 
 ```bash
-git push -u origin main
+git fetch origin
+git branch -a
+git log --oneline --all --decorate -10
 ```
 
+确认远端是否已有提交后再决定直接推送或合并；不要使用强制推送覆盖未知远端历史。

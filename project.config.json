@@ -1,5 +1,5 @@
 {
-  "appid": "touristappid",
+  "appid": "wxad7881ff77589f11",
   "projectname": "sst-abm-training",
   "description": "14天控制力与注意力行为训练小程序",
   "miniprogramRoot": "miniprogram/",
@@ -21,4 +21,3 @@
     ]
   }
 }
-

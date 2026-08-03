@@ -11,7 +11,7 @@
   </view>
 
   <block wx:else>
-    <view class="practice-guide" wx:if="{{mode === 'practice' &amp;&amp; phase === 'ready'}}">
+    <view class="practice-guide" wx:if="{{mode === 'practice' && phase === 'ready'}}">
       先注视“+”；两张图片消失后，请尽快点击原中性图片位置出现的圆点。绿色 ✓ 代表正确，红色 ✗ 代表错误或超时。
     </view>
     <view class="cross" wx:if="{{phase === 'fixation'}}">+</view>
@@ -20,9 +20,9 @@
       <image class="pair-image right" src="{{rightImage}}" mode="aspectFit" />
     </view>
     <view class="probe {{probeSide}}" wx:if="{{phase === 'probe'}}"></view>
-    <view class="feedback correct" wx:if="{{phase === 'feedback' &amp;&amp; result === 'correct'}}">✓</view>
-    <view class="feedback wrong" wx:if="{{phase === 'feedback' &amp;&amp; result !== 'correct'}}">✗</view>
-    <view class="probe flash {{probeSide}}" wx:if="{{phase === 'feedback' &amp;&amp; result !== 'correct'}}"></view>
+    <view class="feedback correct" wx:if="{{phase === 'feedback' && result === 'correct'}}">✓</view>
+    <view class="feedback wrong" wx:if="{{phase === 'feedback' && result !== 'correct'}}">✗</view>
+    <view class="probe flash {{probeSide}}" wx:if="{{phase === 'feedback' && result !== 'correct'}}"></view>
 
     <view class="message" wx:if="{{phase === 'ready'}}">
       <view class="message-title">{{interrupted ? '训练已暂停' : '注意力训练'}}</view>
