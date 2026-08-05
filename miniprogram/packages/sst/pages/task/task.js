@@ -2,14 +2,13 @@ const { monoNow, wallTime } = require('../../common/clock')
 const { LIMITS, buildBlock, createTracker, updateTracker, estimatePse, summarizeBlock } = require('../../common/engine')
 const cdn = require('../../common/cdn')
 const storage = require('../../common/storage')
+const network = require('../../common/network')
 
 const STIMULUS_MS = 1000
 const ITI_MS = 1500
 
 function preloadImage(url) {
-  return new Promise((resolve, reject) => {
-    wx.getImageInfo({ src: url, success: info => resolve([url, info.path]), fail: reject })
-  })
+  return network.getImageInfo(url).then(info => [url, info.path])
 }
 
 Page({
@@ -39,6 +38,12 @@ Page({
     this.currentBlockRecords = []
     this.tracker = createTracker(this.mode)
     this.sessionStartWall = wallTime()
+    this.resourceRetrying = false
+    this.resourceLoadFailed = false
+    this.networkRecoveryHandler = status => {
+      if (status.isConnected && this.resourceLoadFailed) this.retryResources()
+    }
+    if (wx.onNetworkStatusChange) wx.onNetworkStatusChange(this.networkRecoveryHandler)
     this.setData({ mode: this.mode })
 
     if (!cdn.configured) {
@@ -48,7 +53,7 @@ Page({
       })
       return
     }
-    this.initializeAudio().then(() => this.restoreOrStart()).catch(error => this.fail(error))
+    this.retryResources()
   },
 
   onHide() {
@@ -57,6 +62,7 @@ Page({
 
   onUnload() {
     this.clearTimers()
+    if (wx.offNetworkStatusChange && this.networkRecoveryHandler) wx.offNetworkStatusChange(this.networkRecoveryHandler)
     if (this.audioContext && this.audioContext.close) this.audioContext.close()
   },
 
@@ -74,6 +80,7 @@ Page({
   },
 
   fail(error) {
+    this.resourceLoadFailed = true
     const message = error && error.errMsg ? error.errMsg : String(error || '未知错误')
     const account = wx.getAccountInfoSync ? wx.getAccountInfoSync() : null
     const appId = account && account.miniProgram ? account.miniProgram.appId : '无法读取'
@@ -84,16 +91,23 @@ Page({
     })
   },
 
+  retryResources() {
+    if (this.resourceRetrying) return
+    this.resourceRetrying = true
+    this.resourceLoadFailed = false
+    this.setData({ phase: 'loading', loadingText: '正在连接资源服务器…', errorMessage: '' })
+    const audioReady = this.stopBuffer ? Promise.resolve() : this.initializeAudio()
+    audioReady
+      .then(() => this.restoreOrStart())
+      .catch(error => this.fail(error))
+      .finally(() => { this.resourceRetrying = false })
+  },
+
   initializeAudio() {
-    return new Promise((resolve, reject) => {
-      if (!wx.createWebAudioContext) {
-        reject(new Error('当前微信基础库不支持 Web Audio API'))
-        return
-      }
-      this.audioContext = wx.createWebAudioContext()
-      wx.downloadFile({
-        url: cdn.stopSound,
-        success: response => {
+    if (!wx.createWebAudioContext) return Promise.reject(new Error('当前微信基础库不支持 Web Audio API'))
+    if (this.audioContext && this.audioContext.close) this.audioContext.close()
+    this.audioContext = wx.createWebAudioContext()
+    return network.downloadFile(cdn.stopSound).then(response => new Promise((resolve, reject) => {
           if (response.statusCode !== 200) {
             reject(new Error(`提示音下载失败：HTTP ${response.statusCode}`))
             return
@@ -108,10 +122,7 @@ Page({
             },
             fail: reject
           })
-        },
-        fail: reject
-      })
-    })
+    }))
   },
 
   playStopSignal() {
@@ -161,8 +172,9 @@ Page({
   },
 
   async preloadInBatches(urls, batchSize) {
-    for (let i = 0; i < urls.length; i += batchSize) {
-      const entries = await Promise.all(urls.slice(i, i + batchSize).map(preloadImage))
+    const pendingUrls = urls.filter(url => !this.localImages[url])
+    for (let i = 0; i < pendingUrls.length; i += batchSize) {
+      const entries = await Promise.all(pendingUrls.slice(i, i + batchSize).map(preloadImage))
       entries.forEach(([url, path]) => { this.localImages[url] = path })
     }
   },

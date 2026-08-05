@@ -2,6 +2,7 @@ const { monoNow, wallTime } = require('../../common/clock')
 const { buildBlock, createTracker, updateTracker, summary } = require('../../common/engine')
 const cdn = require('../../common/cdn')
 const storage = require('../../common/storage')
+const network = require('../../common/network')
 
 const FORMAL_BLOCKS = 6
 const PROBE_LIMIT_MS = 1000
@@ -9,9 +10,7 @@ const FEEDBACK_MS = 300
 const BLANK_MS = 500
 
 function preloadImage(url) {
-  return new Promise((resolve, reject) => {
-    wx.getImageInfo({ src: url, success: info => resolve([url, info.path]), fail: reject })
-  })
+  return network.getImageInfo(url).then(info => [url, info.path])
 }
 
 Page({
@@ -38,6 +37,12 @@ Page({
     this.localImages = {}
     this.currentBlockRecords = []
     this.tracker = createTracker()
+    this.resourceRetrying = false
+    this.resourceLoadFailed = false
+    this.networkRecoveryHandler = status => {
+      if (status.isConnected && this.resourceLoadFailed) this.retryResources()
+    }
+    if (wx.onNetworkStatusChange) wx.onNetworkStatusChange(this.networkRecoveryHandler)
     const windowInfo = wx.getWindowInfo ? wx.getWindowInfo() : wx.getSystemInfoSync()
     this.windowWidth = windowInfo.windowWidth
     this.windowHeight = windowInfo.windowHeight
@@ -52,14 +57,17 @@ Page({
       })
       return
     }
-    this.restoreOrStart()
+    this.retryResources()
   },
 
   onHide() {
     if (['fixation', 'pair', 'probe', 'feedback', 'blank'].includes(this.data.phase)) this.pauseForInterruption('app_hidden')
   },
 
-  onUnload() { this.clearTimers() },
+  onUnload() {
+    this.clearTimers()
+    if (wx.offNetworkStatusChange && this.networkRecoveryHandler) wx.offNetworkStatusChange(this.networkRecoveryHandler)
+  },
   blockMove() {},
   noop() {},
 
@@ -81,7 +89,29 @@ Page({
       this.trialIndex = checkpoint.trialIndex
       this.tracker = createTracker(checkpoint.tracker)
     }
-    this.loadBlock()
+    return this.loadBlock()
+  },
+
+  retryResources() {
+    if (this.resourceRetrying) return
+    this.resourceRetrying = true
+    this.resourceLoadFailed = false
+    this.setData({ phase: 'loading', loadingText: '正在连接资源服务器…', errorMessage: '' })
+    Promise.resolve(this.restoreOrStart())
+      .catch(error => this.showResourceError(error))
+      .finally(() => { this.resourceRetrying = false })
+  },
+
+  showResourceError(error) {
+    this.resourceLoadFailed = true
+    const message = error && error.errMsg ? error.errMsg : String(error)
+    const account = wx.getAccountInfoSync ? wx.getAccountInfoSync() : null
+    const appId = account && account.miniProgram ? account.miniProgram.appId : '无法读取'
+    const origin = cdn.baseUrl.split('/').slice(0, 3).join('/')
+    this.setData({
+      phase: 'error',
+      errorMessage: `图片预加载失败：${message}\n当前 AppID：${appId}\n下载域名：${origin}`
+    })
   },
 
   loadBlock() {
@@ -99,27 +129,19 @@ Page({
     this.blockStartedWall = wallTime()
     const urls = [...new Set(this.trials.flatMap(trial => [cdn.gameImages[trial.gameIndex], cdn.neutralImages[trial.neutralIndex]]))]
     this.setData({ phase: 'loading', loadingText: `正在预加载第 ${this.blockNo} 组刺激材料…` })
-    this.preloadInBatches(urls, 8).then(() => {
+    return this.preloadInBatches(urls, 8).then(() => {
       if (this.trialIndex >= this.trials.length) {
         this.finishBlock()
         return
       }
       this.setData({ phase: 'ready', interrupted: false })
-    }).catch(error => {
-      const message = error && error.errMsg ? error.errMsg : String(error)
-      const account = wx.getAccountInfoSync ? wx.getAccountInfoSync() : null
-      const appId = account && account.miniProgram ? account.miniProgram.appId : '无法读取'
-      const origin = cdn.baseUrl.split('/').slice(0, 3).join('/')
-      this.setData({
-        phase: 'error',
-        errorMessage: `图片预加载失败：${message}\n当前 AppID：${appId}\n下载域名：${origin}`
-      })
     })
   },
 
   async preloadInBatches(urls, batchSize) {
-    for (let i = 0; i < urls.length; i += batchSize) {
-      const entries = await Promise.all(urls.slice(i, i + batchSize).map(preloadImage))
+    const pendingUrls = urls.filter(url => !this.localImages[url])
+    for (let i = 0; i < pendingUrls.length; i += batchSize) {
+      const entries = await Promise.all(pendingUrls.slice(i, i + batchSize).map(preloadImage))
       entries.forEach(([url, path]) => { this.localImages[url] = path })
     }
   },

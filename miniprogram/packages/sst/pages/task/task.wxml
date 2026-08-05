@@ -5,8 +5,9 @@
   </view>
 
   <view class="error" wx:elif="{{phase === 'error'}}">
-    <view class="error-title">资源尚未配置</view>
+    <view class="error-title">资源加载失败</view>
     <view class="error-copy">{{errorMessage}}</view>
+    <button class="back-button" bindtap="retryResources">重新加载</button>
     <button class="back-button" bindtap="returnHome">返回训练营</button>
   </view>
 

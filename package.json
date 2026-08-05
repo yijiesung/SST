@@ -4,7 +4,7 @@
   "private": true,
   "description": "14天停止信号与注意偏向行为训练微信小程序",
   "scripts": {
-    "test": "node tests/algorithms.test.js && node tests/home-day-selection.test.js",
+    "test": "node tests/algorithms.test.js && node tests/home-day-selection.test.js && node tests/network-retry.test.js",
     "check:size": "node scripts/check-package-size.mjs",
     "check": "npm run test && npm run check:size"
   },
