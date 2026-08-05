@@ -45,7 +45,7 @@ python scripts/upload_cos.py --resume
 
 `COS_SECRET_ID`、`COS_SECRET_KEY` 应使用仅对目标存储桶具有对象上传/查询权限的 CAM 子账号密钥，不要写入代码或提交到 Git。`COS_PUBLIC_BASE_URL` 必须能匿名 HTTPS 读取对象；可使用公开读存储桶的自定义域名，或使用 COS 作为源站的腾讯云 CDN 域名。
 
-随后在微信公众平台把 `COS_PUBLIC_BASE_URL` 的域名加入 downloadFile、request 合法域名。正式发布前不要关闭微信开发者工具的 URL 合法域名校验。
+随后在微信公众平台把 `COS_PUBLIC_BASE_URL` 的域名加入 `downloadFile 合法域名`。工程中的图片和提示音均通过下载接口预加载；域名只填写 `https://主机名`，不要附带 `/sst-assets` 路径、端口或末尾斜杠。正式发布前不要关闭微信开发者工具的 URL 合法域名校验。
 
 ## 开发与验证
 

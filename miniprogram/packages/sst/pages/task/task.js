@@ -85,14 +85,23 @@ Page({
         return
       }
       this.audioContext = wx.createWebAudioContext()
-      wx.request({
+      wx.downloadFile({
         url: cdn.stopSound,
-        responseType: 'arraybuffer',
         success: response => {
-          this.audioContext.decodeAudioData(response.data, buffer => {
-            this.stopBuffer = buffer
-            resolve()
-          }, reject)
+          if (response.statusCode !== 200) {
+            reject(new Error(`提示音下载失败：HTTP ${response.statusCode}`))
+            return
+          }
+          wx.getFileSystemManager().readFile({
+            filePath: response.tempFilePath,
+            success: file => {
+              this.audioContext.decodeAudioData(file.data, buffer => {
+                this.stopBuffer = buffer
+                resolve()
+              }, reject)
+            },
+            fail: reject
+          })
         },
         fail: reject
       })
