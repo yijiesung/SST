@@ -107,7 +107,13 @@ Page({
       this.setData({ phase: 'ready', interrupted: false })
     }).catch(error => {
       const message = error && error.errMsg ? error.errMsg : String(error)
-      this.setData({ phase: 'error', errorMessage: `图片预加载失败：${message}` })
+      const account = wx.getAccountInfoSync ? wx.getAccountInfoSync() : null
+      const appId = account && account.miniProgram ? account.miniProgram.appId : '无法读取'
+      const origin = cdn.baseUrl.split('/').slice(0, 3).join('/')
+      this.setData({
+        phase: 'error',
+        errorMessage: `图片预加载失败：${message}\n当前 AppID：${appId}\n下载域名：${origin}`
+      })
     })
   },
 

@@ -4,4 +4,5 @@ node_modules/
 .venv/
 __pycache__/
 miniprogram/private.config.js
+project.private.config.json
 *.log

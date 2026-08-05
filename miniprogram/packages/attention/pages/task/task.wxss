@@ -14,6 +14,7 @@ page { height: 100%; background: #fff; }
 .message, .error { position: absolute; left: 12%; top: 50%; width: 76%; transform: translateY(-50%); text-align: center; }
 .message-title { color: #172033; font-size: 42rpx; font-weight: 750; }
 .message-copy { margin-top: 22rpx; color: #657286; font-size: 27rpx; line-height: 1.6; }
+.error .message-copy { white-space: pre-line; word-break: break-all; }
 .start-button, .back-button { width: 320rpx; height: 92rpx; margin: 36rpx auto 0; display: flex; align-items: center; justify-content: center; border-radius: 20rpx; color: #fff; background: #2864dc; font-size: 29rpx; font-weight: 700; }
 .practice-guide { position: absolute; z-index: 2; top: 34rpx; left: 8%; width: 84%; color: #657286; font-size: 24rpx; line-height: 1.55; text-align: center; }
 .loading { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #657286; }

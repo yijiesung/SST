@@ -75,7 +75,13 @@ Page({
 
   fail(error) {
     const message = error && error.errMsg ? error.errMsg : String(error || '未知错误')
-    this.setData({ phase: 'error', errorMessage: `资源预加载失败：${message}` })
+    const account = wx.getAccountInfoSync ? wx.getAccountInfoSync() : null
+    const appId = account && account.miniProgram ? account.miniProgram.appId : '无法读取'
+    const origin = cdn.baseUrl.split('/').slice(0, 3).join('/')
+    this.setData({
+      phase: 'error',
+      errorMessage: `资源预加载失败：${message}\n当前 AppID：${appId}\n下载域名：${origin}`
+    })
   },
 
   initializeAudio() {

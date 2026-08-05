@@ -6,8 +6,8 @@ function numbered(kind, count) {
 
 module.exports = {
   configured: !CDN_BASE_URL.includes('example.com'),
+  baseUrl: CDN_BASE_URL,
   gameImages: numbered('game', 163),
   neutralImages: numbered('neutral', 149),
   stopSound: `${CDN_BASE_URL}/audio/stop-beep.wav`
 }
-
