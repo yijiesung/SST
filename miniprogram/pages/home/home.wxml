@@ -27,9 +27,19 @@
   </view>
 
   <view class="card" wx:else>
+    <view class="day-selector">
+      <view>
+        <view class="day-selector-label">选择训练日</view>
+        <view class="day-selector-hint">切换后显示该日任务和完成状态</view>
+      </view>
+      <picker mode="selector" range="{{dayOptions}}" value="{{dayIndex}}" bindchange="onDayChange">
+        <view class="day-selector-control">第 {{day}} 天 <text class="day-selector-arrow">⌄</text></view>
+      </picker>
+    </view>
+
     <view class="card-head">
       <view>
-        <view class="card-title">今日任务</view>
+        <view class="card-title">第 {{day}} 天任务</view>
         <view class="participant">编号 {{participantId}}</view>
       </view>
       <view class="status">{{completedCount}} / {{tasks.length}}</view>
@@ -45,10 +55,9 @@
     </view>
 
     <button class="primary" wx:if="{{!dayComplete}}" bindtap="startNextTask">开始下一项任务</button>
-    <view class="complete-box" wx:else>恭喜您，今天的任务已完成！</view>
+    <view class="complete-box" wx:else>恭喜您，第 {{day}} 天的任务已完成！</view>
     <button class="secondary" bindtap="openExport">导出科研数据</button>
   </view>
 
   <view class="footer-note">训练中请保持小程序位于前台，并关闭来电或消息弹窗干扰。</view>
 </view>
-

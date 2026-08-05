@@ -5,6 +5,11 @@
 .title { margin-top: 12rpx; font-size: 52rpx; line-height: 1.25; font-weight: 750; color: #12213b; }
 .intro { margin-top: 28rpx; display: flex; flex-direction: column; gap: 14rpx; color: #58677c; font-size: 29rpx; line-height: 1.65; }
 .card { background: #fff; border-radius: 28rpx; padding: 34rpx 30rpx; box-shadow: 0 14rpx 42rpx rgba(35, 55, 88, .08); }
+.day-selector { display: flex; align-items: center; justify-content: space-between; gap: 24rpx; margin-bottom: 28rpx; padding: 24rpx; border-radius: 20rpx; background: #f3f6fb; }
+.day-selector-label { color: #263750; font-size: 28rpx; font-weight: 700; }
+.day-selector-hint { margin-top: 6rpx; color: #8a95a5; font-size: 21rpx; }
+.day-selector-control { min-width: 150rpx; padding: 18rpx 22rpx; border: 2rpx solid #cfdcf4; border-radius: 16rpx; color: #285bc7; background: #fff; font-size: 26rpx; font-weight: 700; text-align: center; }
+.day-selector-arrow { margin-left: 8rpx; color: #66809f; }
 .card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18rpx; }
 .card-title { font-size: 34rpx; font-weight: 700; }
 .participant { margin-top: 6rpx; color: #8a95a5; font-size: 23rpx; }
@@ -25,4 +30,3 @@
 .task-state { flex: 0 0 auto; }
 .complete-box { margin-top: 28rpx; padding: 28rpx; border-radius: 18rpx; text-align: center; background: #e9f8f1; color: #16855a; font-weight: 650; }
 .footer-note { padding: 0 18rpx; text-align: center; }
-

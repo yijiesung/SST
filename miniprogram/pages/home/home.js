@@ -1,4 +1,5 @@
 const DAY_MS = 24 * 60 * 60 * 1000
+const DAY_OPTIONS = Array.from({ length: 14 }, (_, index) => `第 ${index + 1} 天`)
 
 function localDateKey(date) {
   const y = date.getFullYear()
@@ -40,6 +41,8 @@ Page({
     participantInput: '',
     participantId: '',
     day: 1,
+    dayIndex: 0,
+    dayOptions: DAY_OPTIONS,
     title: '欢迎来到大脑训练营，第 1 天！',
     tasks: [],
     completedCount: 0,
@@ -57,7 +60,14 @@ Page({
       this.setData({ enrolled: false })
       return
     }
-    const day = dayNumber(profile.startDate)
+    const selectedDayKey = `selected_training_day:${profile.participantId}`
+    const storedDay = Number(wx.getStorageSync(selectedDayKey))
+    const day = this.selectedDay || (storedDay >= 1 && storedDay <= 14 ? storedDay : dayNumber(profile.startDate))
+    this.selectedDay = day
+    this.renderDay(profile, day)
+  },
+
+  renderDay(profile, day) {
     const key = `day_progress:${profile.participantId}:${day}`
     const progress = wx.getStorageSync(key) || { completed: [] }
     const tasks = taskPlan(day).map(item => ({ ...item, done: progress.completed.includes(item.id) }))
@@ -67,12 +77,22 @@ Page({
       enrolled: true,
       participantId: profile.participantId,
       day,
+      dayIndex: day - 1,
       title: day === 14 ? '大脑训练营，第 14 天！' : `欢迎来到大脑训练营，第 ${day} 天！`,
       tasks,
       completedCount,
       nextIndex: nextIndex < 0 ? tasks.length : nextIndex,
       dayComplete: nextIndex < 0
     })
+  },
+
+  onDayChange(event) {
+    const day = Math.max(1, Math.min(14, Number(event.detail.value) + 1))
+    const profile = wx.getStorageSync('training_profile')
+    if (!profile || !profile.participantId) return
+    this.selectedDay = day
+    wx.setStorageSync(`selected_training_day:${profile.participantId}`, day)
+    this.renderDay(profile, day)
   },
 
   onParticipantInput(event) {
@@ -86,6 +106,8 @@ Page({
       return
     }
     wx.setStorageSync('training_profile', { participantId, startDate: localDateKey(new Date()) })
+    this.selectedDay = 1
+    wx.setStorageSync(`selected_training_day:${participantId}`, 1)
     this.refresh()
   },
 
@@ -99,4 +121,3 @@ Page({
     wx.navigateTo({ url: `/packages/data/pages/export/export?participant=${encodeURIComponent(this.data.participantId)}` })
   }
 })
-
