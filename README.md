@@ -17,10 +17,6 @@
 
 ## CDN 上传与配置
 
-素材总量较大，严禁复制到 `miniprogram/`。上传脚本默认读取：
-
-- `/Users/songyijie/Documents/创业/陆静-游戏成瘾训练/游戏图片`
-- `/Users/songyijie/Documents/创业/陆静-游戏成瘾训练/中性图片`
 
 项目已按腾讯云 COS 作为正式素材存储方案配置。脚本使用 macOS `sips` 将图片最长边压到 1600px、JPEG 质量 78；提示音由脚本生成 80ms 单次“滴”声。对象使用一年不可变缓存，上传后自动更新两个分包内的 CDN 根地址。
 
@@ -63,16 +59,5 @@ python scripts/upload_cos.py --resume
 
 另有一处定义冲突：文档规定探测点必须始终位于中性图片原位置，同时要求计算“探测点与游戏图片同侧/异侧”的传统偏向分数。按前一条规则，探测点与游戏图片永远异侧，因此同侧 RT 不存在。本实现严格保持探测点位于中性图片位置，原始数据写入 `probeGameRelation: "opposite"`，汇总中的同侧 RT 和偏向分数留空并附原因，避免生成伪数据。
 
-## Git 备份
-
-本地仓库的 `origin` 已配置为 `https://github.com/yijiesung/SST.git`。若出现 `Write access to repository not granted`，说明当前 HTTPS 凭据对应的 GitHub 账号没有该仓库写权限。请使用仓库所有者账号重新认证，或由仓库所有者在 Settings → Collaborators 中邀请当前账号并授予 Write 权限。
-
-权限修复后先读取远端历史：
-
-```bash
-git fetch origin
-git branch -a
-git log --oneline --all --decorate -10
-```
 
 确认远端是否已有提交后再决定直接推送或合并；不要使用强制推送覆盖未知远端历史。
